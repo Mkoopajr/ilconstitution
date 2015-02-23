@@ -15,7 +15,7 @@
     "devDependencies": {
         "istanbul": "~0.3.x",
         "request": "~2.52.x",
-        "vows": "~0.8.0"
+        "vows": "0.8.0"
         
     },
     "scripts": {

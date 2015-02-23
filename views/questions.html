@@ -1,0 +1,11 @@
+<form id="questions" action="/check" method="post">
+    <p>Question: {{question}}</p>
+    {{#if multi}}
+        <p>(pick all that apply)</p>
+        {{#multiList options}}{{/multiList}}
+    {{else}}
+        {{#list options}}{{/list}}
+    {{/if}}
+    <button id="submit" class="pure-button" type="submit">submit</button>
+    <a class="pure-button" href="/next">next</a>
+</form>

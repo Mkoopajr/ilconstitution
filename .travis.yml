@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+    - "0.10"
+services:
+    - mongodb
+before_script:
+    - sleep 15
+    - ./tests/setup.js
+env:
+    global:
+        - "MONGOLAB_URI=mongodb://localhost:27017/test"

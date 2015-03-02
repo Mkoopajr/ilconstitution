@@ -1,11 +1,18 @@
 language: node_js
 node_js:
-    - "0.10"
+- '0.10'
 services:
-    - mongodb
+- mongodb
 before_script:
-    - sleep 15
-    - ./tests/setup.js
+- sleep 15
+- ./tests/setup.js
 env:
-    global:
-        - "MONGOLAB_URI=mongodb://localhost:27017/test"
+  global:
+  - MONGOLAB_URI=mongodb://localhost:27017/test
+deploy:
+  provider: heroku
+  api_key:
+    secure: Njq3mlXhZiVnHKxOyOo2u58LyM6ql68tMyYuQ4uYz4ExqxSX3gjtXYMqbmF9XnKsLiVdOtSdfbpWYkwhFMFWL1ADnP96XX0TGn64St3N+kgEphHiQ3iMQazNXr6Oq6Sz1DGb30zdR33zctwy4bQC3BdFPSjqydJRG6m3ikzBIEY=
+  app: ilconstitution
+  on:
+    repo: Mkoopajr/ilconstitution

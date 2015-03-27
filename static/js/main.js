@@ -56,9 +56,13 @@ $(document).ready(function() {
                 for (var i = 0; i < data.length; ++i) {
                     $('input[value=' + data[i] + ']').parent('p').css('color', '#33CC00');
                 }
+
+                $('#submit').replaceWith('<a class="pure-button" href="/next">next</a>');
             }
         });
 
         ev.preventDefault();
+
+
     });
 });

@@ -1,5 +1,5 @@
 <form id="questions" action="/check" method="post">
-    <p>Question: {{question}}</p>
+    <p>Question {{count}} of 124: {{question}}</p>
     {{#if multi}}
         <p>(pick all that apply)</p>
         {{#multiList options}}{{/multiList}}

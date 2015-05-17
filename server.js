@@ -11,6 +11,12 @@ server.state('question', {
     encoding: 'base64json'
 });
 
+server.state('randomizer', {
+    ttl: null,
+    isHttpOnly: true,
+    encoding: 'base64json'
+});
+
 server.views({
     path: './views',
     layoutPath: './views/layout',

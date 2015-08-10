@@ -48,10 +48,22 @@ MongoClient.connect(uri, function(err, db) {
             db.close();
             console.log(err);
         }
-        
-        col.insert([data1, data2], function(err, result) {
-            db.close();
-            console.log(result);
+
+        col.createIndex({'randomizer': '2dsphere'}, function(err, result) {
+            if (err) {
+                db.close();
+                console.log(err);
+            }
+
+            col.insert([data1, data2], function(err, result) {
+                if (err) {
+                    db.close();
+                    console.log(err);
+                }
+
+                db.close();
+                console.log(result);
+            });
         });
     });
 });

@@ -1,11 +1,21 @@
 var request = require('request'),
     j = request.jar(),
-    altJ = request.jar(),
-    cookie = request.cookie('question=eyJjb3VudCI6MCwicmlnaHQiOjB9'),
-    altCookie = request.cookie('question=eyJjb3VudCI6MjcsInJpZ2h0IjowfQ==');
+    altJ = request.jar();
 
-j.setCookie(cookie, 'http://127.0.0.1:3000');
-altJ.setCookie(altCookie, 'http://127.0.0.1:3000');
+exports.getApi = function(path, cookieJar, cb) {
+    var args = [];
+    for (var i = 0; i < arguments.length; ++i) {
+        args.push(arguments[i]);
+    }
+
+    path = args.shift();
+    cb = args.pop();
+    cookieJar = (args.length > 0 && args[0] === true) ? j : null;
+
+    var url = 'http://127.0.0.1:3000' + path;
+
+    request({url: url, jar: cookieJar, json: true}, cb);
+};
 
 exports.get = function(path, cookieJar, cb) {
 
@@ -18,7 +28,7 @@ exports.get = function(path, cookieJar, cb) {
     cb = args.pop();
     cookieJar = (args.length > 0 && args[0] === true) ? j : null;
 
-    var url = 'http://127.0.0.1:3000' + path;
+    var url = 'http://127.0.0.1:3001' + path;
 
     request({url: url, jar: cookieJar}, cb);
 };
@@ -55,7 +65,7 @@ exports.post = function(path, cookieJar, data, cb) {
         }
     }
 
-    var url = 'http://127.0.0.1:3000' + path;
+    var url = 'http://127.0.0.1:3001' + path;
 
     request.post({url: url, jar: cookieJar, form: data}, cb);
 };
@@ -71,7 +81,7 @@ exports.getEnd = function(path, cookieJar, cb) {
     cb = args.pop();
     cookieJar = (args.length > 0 && args[0] === true) ? altJ : null;
 
-    var url = 'http://127.0.0.1:3000' + path;
+    var url = 'http://127.0.0.1:3001' + path;
 
     request({url: url, jar: cookieJar}, cb);
 };
@@ -109,7 +119,7 @@ exports.postEnd = function(path, cookieJar, data, cb) {
         }
     }
 
-    var url = 'http://127.0.0.1:3000' + path;
+    var url = 'http://127.0.0.1:3001' + path;
 
     request.post({url: url, jar: cookieJar, form: data}, cb);
 };

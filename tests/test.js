@@ -3,6 +3,8 @@ var vows = require('vows'),
     app = require('../server.js'),
     fetch = require('./fetch.js');
 
+var temp = {};
+
 var test = {
     'Is loaded': {
         topic: function() {
@@ -12,7 +14,7 @@ var test = {
             assert.ok(topic);
         }
     },
-    'make request': {
+    'Make request': {
         'to': {
             'GET /': {
                 topic: function() {
@@ -22,6 +24,7 @@ var test = {
                     });
                 },
                 'should answer with 200': function(topic) {
+                    assert.equal(topic.req.path, '/');
                     assert.equal(topic.statusCode, 200);
                 }
             },
@@ -33,6 +36,7 @@ var test = {
                     });
                 },
                 'should answer with 200': function(topic) {
+                    assert.equal(topic.req.path, '/about');
                     assert.equal(topic.statusCode, 200);
                 }
             },
@@ -44,6 +48,7 @@ var test = {
                     });
                 },
                 'should answer with 200': function(topic) {
+                    assert.equal(topic.req.path, '/study');
                     assert.equal(topic.statusCode, 200);
                 }
             },
@@ -62,15 +67,65 @@ var test = {
             'GET /start': {
                 topic: function() {
                     var self = this;
-                    fetch.get('/start', function(err, res) {
+                    fetch.get('/start', true, function(err, res) {
                         self.callback(err, res);
                     });
                 },
                 'should answer with 200': function(topic) {
                     assert.equal(topic.statusCode, 200);
+                },
+                'then POST /check (with cookie no answer)': {
+                    topic: function() {
+                        var self = this;
+                        fetch.post('/check', true, function(err, res) {
+                            self.callback(err, res);
+                        });
+                    },
+                    'should answer with 200': function(topic) {
+                        assert.equal(topic.statusCode, 200);
+                    }
+                },
+                'then POST /check (with cookie and answer)': {
+                    topic: function() {
+                        var self = this;
+
+                        fetch.getApi('/grab', true, function(err, res) {
+                            temp.question = res.body.answer;
+
+                            fetch.post('/check', true, temp, function(err, res) {
+                                self.callback(err, res);
+                            });
+                        });
+                    },
+                    'should answer with 200': function(topic) {
+                        assert.equal(topic.statusCode, 200);
+                    }
+                },
+                'then POST /check (with cookie and wrong answer)': {
+                    topic: function() {
+                        var self = this;
+                        fetch.post('/check', true, {'question': ['100']}, function(err, res) {
+                            self.callback(err, res);
+                        });
+                    },
+                    'should answer with 200': function(topic) {
+                        assert.equal(topic.statusCode, 200);
+                    }
+                },
+                'then GET /next (with cookie)': {
+                    topic: function() {
+                        var self = this;
+                        fetch.get('/next', true, function(err, res) {
+                            self.callback(err, res);
+                        });
+                    },
+                    'should answer with 200': function(topic) {
+                        assert.equal(topic.req.path, '/next');
+                        assert.equal(topic.statusCode, 200);
+                    }
                 }
             },
-            'GET /next': {
+            'GET /next (no cookie)': {
                 topic: function() {
                     var self = this;
                     fetch.get('/next', function(err, res) {
@@ -81,109 +136,9 @@ var test = {
                     assert.equal(topic.req.path, '/start');
                     assert.equal(topic.statusCode, 200);
                 }
-            },
-            'GET /next with cookie': {
-                topic: function() {
-                    var self = this;
-                    fetch.get('/next', true,  function(err, res) {
-                        self.callback(err, res);
-                    });
-                },
-                'should answer with 200': function(topic) {
-                    assert.equal(topic.statusCode, 200);
-                }
-            },
-            'GET /next end': {
-                topic: function() {
-                    var self = this;
-                    fetch.getEnd('/next', true,  function(err, res) {
-                        self.callback(err, res);
-                    });
-                },
-                'should answer with 200': function(topic) {
-                    assert.equal(topic.statusCode, 200);
-                }
-            },
-            'GET /check': {
-                topic: function() {
-                    var self = this;
-                    fetch.get('/check', function(err, res) {
-                        self.callback(err, res);
-                    });
-                },
-                'should answer with /': function(topic) {
-                    assert.equal(topic.req.path, '/');
-                    assert.equal(topic.statusCode, 200);
-                }
-            },
-            'POST /check': {
-                topic: function() {
-                    var self = this;
-                    fetch.post('/check', function(err, res) {
-                        self.callback(err, res);
-                    });
-                },
-                'should answer with 500': function(topic) {
-                    assert.equal(topic.statusCode, 500);
-                }
-            },
-            'POST /check with cookie': {
-                topic: function() {
-                    var self = this;
-                    fetch.post('/check', true, function(err, res) {
-                        self.callback(err, res);
-                    });
-                },
-                'should answer with 200': function(topic) {
-                    assert.equal(topic.statusCode, 200);
-                }
-            },
-            'POST /check with cookie and incorrect payload': {
-                topic: function() {
-                    var self = this;
-                    fetch.post('/check', true, {'question': ['2']}, function(err, res) {
-                        self.callback(err, res);
-                    });
-                },
-                'should answer with 200': function(topic) {
-                    assert.equal(topic.statusCode, 200);
-                }
-            },
-            'POST /check with cookie and correct payload': {
-                topic: function() {
-                    var self = this;
-                    fetch.post('/check', true, {'question': ['2', '3']},  function(err, res) {
-                        self.callback(err, res);
-                    });
-                },
-                'should answer with 200': function(topic) {
-                    assert.equal(topic.statusCode, 200);
-                }
-            },
-            'POST /check with cookie and correct size but wrong answer': {
-                topic: function() {
-                    var self = this;
-                    fetch.post('/check', true, {'question': ['2', '4']},  function(err, res) {
-                        self.callback(err, res);
-                    });
-                },
-                'should answer with 200': function(topic) {
-                    assert.equal(topic.statusCode, 200);
-                }
-            },
-            'POST /check end': {
-                topic: function() {
-                    var self = this;
-                    fetch.postEnd('/check', true, function(err, res) {
-                        self.callback(err, res);
-                    });
-                },
-                'should answer with 200': function(topic) {
-                    assert.equal(topic.statusCode, 200);
-                }
             }
         }
     }
-};
+}
 
 vows.describe('test.js').addBatch(test).export(module);

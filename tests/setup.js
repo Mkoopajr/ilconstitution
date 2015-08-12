@@ -14,7 +14,11 @@ var data1 = {
         "4" : "The Amendments"
     },
     "answer" : ["2", "3"],
-    "multi" : true
+    "multi" : true,
+    "randomizer" : [
+        0.004628593567758799,
+        0.20673484704457223
+    ]
 };
 
 var data2 = {
@@ -27,7 +31,11 @@ var data2 = {
         "4" : "That America is the best country in the world"
     },
     "answer" : ["0"],
-    "multi" : false
+    "multi" : false,
+    "randomizer" : [
+        0.9244870271068066,
+        0.7100111313629895
+    ]
 };
 
 MongoClient.connect(uri, function(err, db) {
@@ -40,10 +48,22 @@ MongoClient.connect(uri, function(err, db) {
             db.close();
             console.log(err);
         }
-        
-        col.insert([data1, data2], function(err, result) {
-            db.close();
-            console.log(result);
+
+        col.createIndex({'randomizer': '2dsphere'}, function(err, result) {
+            if (err) {
+                db.close();
+                console.log(err);
+            }
+
+            col.insert([data1, data2], function(err, result) {
+                if (err) {
+                    db.close();
+                    console.log(err);
+                }
+
+                db.close();
+                console.log(result);
+            });
         });
     });
 });
